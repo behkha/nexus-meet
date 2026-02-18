@@ -13,5 +13,11 @@ export async function refreshAccessToken(refreshToken: string) {
 }
 
 export async function getUserProfile() {
-  return axiosInstance.get("/users/profile");
+  return axiosInstance.get("/profile/me");
+}
+
+export async function logout(refreshToken: string) {
+  return await axiosInstance.post("/auth/logout", {
+    token: refreshToken,
+  });
 }

@@ -2,9 +2,12 @@ import { computed, ref } from "vue";
 import { defineStore } from "pinia";
 import * as AuthService from "#/services/auth.service";
 import type { IUser } from "#/types/user.type";
+import { useRouter } from "vue-router";
 
 const REFRESH_TOKEN_APP_KEY = "nexus-meet-rt-key";
 export const useAuthStore = defineStore("auth", () => {
+  const router = useRouter();
+
   const accessToken = ref<string | null>(null);
   const refreshToken = ref(localStorage.getItem(REFRESH_TOKEN_APP_KEY));
   const user = ref<IUser | null>(null);
@@ -58,12 +61,22 @@ export const useAuthStore = defineStore("auth", () => {
     user.value = null;
   }
 
+  async function logout() {
+    try {
+      await AuthService.logout(refreshToken.value!);
+      clearState();
+      router.replace({ name: "login" });
+    } catch (error) {
+      throw error;
+    }
+  }
+
   async function fetchUserProfile() {
     try {
       const userResponse = await AuthService.getUserProfile();
       user.value = userResponse.data.data;
     } catch (error) {
-      throw error
+      throw error;
     }
   }
 
@@ -93,5 +106,6 @@ export const useAuthStore = defineStore("auth", () => {
     login,
     loginWithGoogle,
     refreshAccessToken,
+    logout,
   };
 });

@@ -59,7 +59,7 @@
             </DropdownMenuItem>
           </DropdownMenuGroup>
           <DropdownMenuSeparator />
-          <DropdownMenuItem>
+          <DropdownMenuItem @click="handleLogout">
             <LogOut />
             Log out
           </DropdownMenuItem>
@@ -106,4 +106,8 @@ const { isMobile } = useSidebar();
 const user = computed(() => {
   return authStore.user;
 });
+
+function handleLogout() {
+  authStore.logout()
+}
 </script>

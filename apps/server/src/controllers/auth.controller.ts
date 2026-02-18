@@ -1,5 +1,5 @@
 import { type Request, type Response } from "express";
-import { AuthService } from "#src/services/auth.service.ts";
+import * as AuthService from "#src/services/auth.service.ts";
 import * as UsersService from "#src/services/users.service.ts";
 import type { IUserPayload } from "#src/types/auth.types.ts";
 import { generateTokens, verifyRefreshToken } from "#src/utils/token.utils.ts";
@@ -85,7 +85,7 @@ export const AuthController = {
   },
   async logout(req: Request, res: Response) {
     try {
-      const token = req.cookies?.refreshToken;
+      const { token } = req.body;
 
       if (token) {
         await deleteRefreshToken(token);

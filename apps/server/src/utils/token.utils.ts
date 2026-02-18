@@ -1,3 +1,4 @@
+import { type Response } from "express";
 import type { ITokenPair, IUserPayload } from "#src/types/auth.types.ts";
 import jwt, { type SignOptions } from "jsonwebtoken";
 
@@ -27,4 +28,16 @@ export const verifyRefreshToken = (token: string): IUserPayload => {
 export const getRemainingSeconds = (exp: number) => {
   const now = Math.floor(Date.now() / 1000);
   return Math.max(0, exp - now);
-}
+};
+
+export const attachRefreshTokenToCookies = (
+  res: Response,
+  refreshToken: string,
+) => {
+  res.cookie("refreshToken", refreshToken, {
+    httpOnly: true,
+    sameSite: "strict",
+    secure: true,
+    maxAge: 7 * 24 * 60 * 60 * 1000,
+  });
+};

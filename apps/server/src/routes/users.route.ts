@@ -4,6 +4,6 @@ import * as UsersController from "#src/controllers/users.controller.ts";
 
 const router = Router();
 
-router.get("/profile", authenticate, UsersController.getProfile);
+router.get("/me", authenticate, UsersController.getProfile);
 
 export default router;
