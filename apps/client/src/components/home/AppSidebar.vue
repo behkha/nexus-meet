@@ -1,11 +1,22 @@
 <template>
   <Sidebar v-bind="props">
     <SidebarHeader>
-      <TeamSwitcher :teams="data.teams" />
+      <SidebarMenu>
+        <SidebarMenuItem>
+          <SidebarMenuButton
+            as-child
+            class="data-[slot=sidebar-menu-button]:!p-1.5"
+          >
+            <a href="#">
+              <GalleryVerticalEnd class="!size-5" />
+              <span class="text-base font-semibold">Acme Inc.</span>
+            </a>
+          </SidebarMenuButton>
+        </SidebarMenuItem>
+      </SidebarMenu>
     </SidebarHeader>
     <SidebarContent>
-      <NavMain :items="data.navMain" />
-      <NavProjects :projects="data.projects" />
+      <MeetList />
     </SidebarContent>
     <SidebarFooter>
       <NavUser :user="data.user" />
@@ -18,6 +29,7 @@
 import type { SidebarProps } from "#/components/ui/sidebar";
 
 import NavUser from "./NavUser.vue";
+import MeetList from "#/components/meet/MeetList.vue";
 
 import {
   Sidebar,
@@ -25,6 +37,9 @@ import {
   SidebarFooter,
   SidebarHeader,
   SidebarRail,
+  SidebarMenu,
+  SidebarMenuItem,
+  SidebarMenuButton
 } from "#/components/ui/sidebar";
 
 import {
@@ -38,6 +53,7 @@ import {
   PieChart,
   Settings2,
   SquareTerminal,
+  
 } from "lucide-vue-next";
 
 const props = withDefaults(defineProps<SidebarProps>(), {

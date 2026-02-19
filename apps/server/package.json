@@ -23,6 +23,7 @@
     "ioredis": "^5.9.3",
     "jsonwebtoken": "^9.0.3",
     "livekit-server-sdk": "^2.15.0",
+    "nanoid": "^5.1.6",
     "nodemailer": "^8.0.1"
   },
   "devDependencies": {
