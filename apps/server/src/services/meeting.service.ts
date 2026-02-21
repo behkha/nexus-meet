@@ -6,12 +6,26 @@ import { nanoid } from "nanoid";
 import { sql } from "bun";
 
 export const MeetingService = {
-  async createMeeting(
-    title: string,
-    host: IUser,
-    accessType: IMeetingAccessType,
-    password?: string,
-  ) {
+  async getUserMeetings(userId: string) {
+    const meetings = await sql<IMeeting[]>`
+      SELECT id, title, description, room_name, host_id, access_type, created_at FROM meetings
+      WHERE host_id = ${userId}
+    `;
+    return meetings;
+  },
+  async createMeeting({
+    title,
+    description,
+    host,
+    accessType,
+    password,
+  }: {
+    title: string;
+    description?: string;
+    host: IUser;
+    accessType: IMeetingAccessType;
+    password?: string;
+  }) {
     const roomName = nanoid(10);
     let passwordHash: string | null = null;
 
@@ -20,9 +34,9 @@ export const MeetingService = {
     }
 
     const meeting = await sql<IMeeting[]>`
-      INSERT INTO meetings (title, room_name, host_id, access_type, password_hash)
-      VALUES (${title}, ${roomName}, ${host.id}, ${accessType}, ${passwordHash})
-      RETURNING *;
+      INSERT INTO meetings (title, description, room_name, host_id, access_type, password_hash)
+      VALUES (${title}, ${description}, ${roomName}, ${host.id}, ${accessType}, ${passwordHash})
+      RETURNING id, title, description, room_name, host_id, access_type, created_at;
     `;
 
     const token = await this.generateToken(

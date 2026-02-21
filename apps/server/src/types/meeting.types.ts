@@ -3,6 +3,7 @@ import type { IUser } from "./user.types.ts";
 export interface IMeeting {
   id: string;
   title: string;
+  description: string | null;
   room_name: string;
   host_id: IUser["id"];
   is_active: boolean;

@@ -1,6 +1,6 @@
 import { type Request, type Response } from "express";
-import * as AuthService from "#src/services/auth.service.ts";
-import * as UsersService from "#src/services/users.service.ts";
+import { AuthService } from "#src/services/auth.service.ts";
+import { UserService } from "#src/services/users.service.ts";
 import type { IUserPayload } from "#src/types/auth.types.ts";
 import { generateTokens, verifyRefreshToken } from "#src/utils/token.utils.ts";
 import {
@@ -17,16 +17,16 @@ export const AuthController = {
       const googleUser = await AuthService.getGooglePayload(credential);
       if (!googleUser || !googleUser.email) throw new Error("Login failed!");
 
-      let user = await UsersService.findByEmail(googleUser.email);
+      let user = await UserService.findByEmail(googleUser.email);
       if (!user) {
-        user = await UsersService.upsertGoogleUser(
+        user = await UserService.upsertGoogleUser(
           googleUser.email,
           googleUser.name || "User",
           googleUser.picture,
           googleUser.sub,
         );
       } else if (!user.google_id) {
-        await UsersService.updateGoogleId(user.email, googleUser.sub);
+        await UserService.updateGoogleId(user.email, googleUser.sub);
       }
 
       const userPayload: IUserPayload = {
@@ -42,6 +42,7 @@ export const AuthController = {
         refreshToken,
       });
     } catch (error: any) {
+      console.log(error)
       res.status(500).json({ message: "Internal server error" });
     }
   },

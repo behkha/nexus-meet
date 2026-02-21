@@ -76,6 +76,7 @@ export const useAuthStore = defineStore("auth", () => {
       const userResponse = await AuthService.getUserProfile();
       user.value = userResponse.data.data;
     } catch (error) {
+      clearState()
       throw error;
     }
   }

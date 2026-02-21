@@ -11,31 +11,26 @@ import { MeetingModel } from "#src/models/meeting.model.ts";
 export const MeetingController = {
   async index(req: Request, res: Response) {
     const user = await UserService.findById(req.user?.id!);
-    // const meetings = await sql`
-    //   SELECT * FROM meetings 
-    //   WHERE host_id = ${user?.id} 
-    //   OR id IN (
-    //     SELECT meeting_id FROM meeting_requests WHERE user_id = ${user?.id} AND status = '${IMeetingRequestStatus.APPROVED}'
-    //   )
-    // `;
-  
-    const meetings = await sql`
-      SELECT * FROM meetings
-      WHERE host_id = ${user?.id}
-    `
+    const meetings = await MeetingService.getUserMeetings(user?.id!);
     res.json(meetings);
   },
   async create(req: Request, res: Response) {
-    const { title, accessType = IMeetingAccessType.OPEN, password } = req.body;
+    const {
+      title,
+      description,
+      accessType = IMeetingAccessType.OPEN,
+      password,
+    } = req.body;
     const user = await UserService.findById(req.user?.id);
 
     try {
-      const data = await MeetingService.createMeeting(
+      const data = await MeetingService.createMeeting({
         title,
-        user!,
+        description,
+        host: user!,
         accessType,
         password,
-      );
+      });
       res.json(data);
     } catch (error: any) {
       res.status(500).json({ error: error.message });
