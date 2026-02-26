@@ -9,7 +9,7 @@ const routes: RouteRecordRaw[] = [
   {
     path: "/",
     name: "home",
-    component: () => import("../views/HomeView.vue"),
+    component: () => import("#/views/HomeView.vue"),
     meta: {
       requiresAuth: true,
     },
@@ -17,14 +17,22 @@ const routes: RouteRecordRaw[] = [
   {
     path: "/auth",
     name: "auth",
-    component: () => import("../views/AuthView.vue"),
+    component: () => import("#/views/AuthView.vue"),
     children: [
       {
         path: "login",
         name: "login",
-        component: () => import("../components/auth/LoginForm.vue"),
+        component: () => import("#/components/auth/LoginForm.vue"),
       },
     ],
+  },
+  {
+    path: "/meet/:roomName",
+    name: "meet",
+    component: () => import("#/components/meet/MeetContainer.vue"),
+    meta: {
+      requiresAuth: true,
+    },
   },
 ];
 

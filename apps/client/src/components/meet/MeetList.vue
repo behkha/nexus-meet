@@ -13,7 +13,7 @@
           <ItemContent>
             <ItemTitle>{{ meet.title }}</ItemTitle>
             <ItemDescription>
-              {{ meet?.description || "No description!" }}
+              {{ meet?.room_name || "No description!" }}
             </ItemDescription>
           </ItemContent>
           <ItemActions class="mb-auto">

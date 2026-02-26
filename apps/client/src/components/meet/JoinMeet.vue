@@ -127,7 +127,11 @@
         class="min-w-sm"
         placeholder="Enter Room Name"
       />
-      <Button :variant="roomName ? 'outline' : 'ghost'" :disabled="!roomName">
+      <Button
+        :variant="roomName ? 'outline' : 'ghost'"
+        :disabled="!roomName"
+        @click="joinMeet"
+      >
         Join
       </Button>
     </div>
@@ -141,6 +145,9 @@ import { MeetingService } from "#/services/meeting.service";
 import { toTypedSchema } from "@vee-validate/zod";
 import { useForm, Field as VeeField } from "vee-validate";
 import { z } from "zod";
+
+import { useRouter } from "vue-router";
+const router = useRouter();
 
 import { Button } from "#/components/ui/button";
 import { Input } from "#/components/ui/input";
@@ -219,11 +226,25 @@ const onSubmit = handleSubmit(async (data) => {
     loading.value = false;
   }
 });
+
+function joinMeet() {
+  if (!roomName.value) {
+    toast.error("Please enter a room name to join.");
+    return;
+  }
+
+  const resolvedRoute = router.resolve({
+    name: "meet",
+    params: { roomName: roomName.value },
+  });
+  window.open(resolvedRoute.href, "_blank");
+}
 </script>
 
 <style scoped>
 @keyframes float-glow {
-  0%, 100% {
+  0%,
+  100% {
     transform: scale(1);
     opacity: 0.3;
     border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%;
@@ -235,7 +256,7 @@ const onSubmit = handleSubmit(async (data) => {
   }
   50% {
     transform: scale(1.2);
-    opacity: 0.40;
+    opacity: 0.4;
     border-radius: 40% 50% 40% 60% / 40% 40% 60% 50%;
   }
   75% {

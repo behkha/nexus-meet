@@ -19,5 +19,9 @@
   "type": "commonjs",
   "devDependencies": {
     "pnpm": "^10.13.1"
-  }
+  },
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ]
 }

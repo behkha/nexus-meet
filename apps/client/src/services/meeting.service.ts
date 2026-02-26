@@ -12,4 +12,7 @@ export const MeetingService = {
   async createMeet(payload: INewMeetingPayload) {
     return axiosInstance.post<INewMeetingResponse>("/meetings/create", payload);
   },
+  async joinMeet(roomName: string, password?: string) {
+    return axiosInstance.post("/meetings/join", { roomName, password });
+  },
 };

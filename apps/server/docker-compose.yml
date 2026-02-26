@@ -1,0 +1,11 @@
+version: "3.9"
+
+services:
+  livekit:
+    image: livekit/livekit-server
+    platform: linux/amd64
+    ports:
+      - "7880:7880"
+    volumes:
+      - ./livekit.yaml:/livekit.yaml
+    command: --config /livekit.yaml

@@ -1,4 +1,4 @@
-import { MeetingController } from "#src/controllers/meeting.controller.ts";
+import { MeetingController } from "#src/controllers/meetings.controller.ts";
 import { authenticate } from "#src/middlewares/auth.middleware.ts";
 import { Router } from "express";
 

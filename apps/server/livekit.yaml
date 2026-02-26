@@ -1,0 +1,7 @@
+port: 7880
+
+keys:
+  sVLHQDkjHW?f7uJy: f524e8a011d84dd3a5ad4589fdd381fd70f8f74995108cd9e325bb3c82d30bfe
+
+rtc:
+  use_external_ip: false

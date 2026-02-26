@@ -1,4 +1,4 @@
-import { MeetingService } from "#src/services/meeting.service.ts";
+import { MeetingService } from "#src/services/meetings.service.ts";
 import { UserService } from "#src/services/users.service.ts";
 import {
   IMeetingAccessType,
@@ -6,7 +6,7 @@ import {
 } from "#src/types/meeting.types.ts";
 import { type Request, type Response } from "express";
 import { sql } from "bun";
-import { MeetingModel } from "#src/models/meeting.model.ts";
+import { MeetingModel } from "#src/models/meetings.model.ts";
 
 export const MeetingController = {
   async index(req: Request, res: Response) {
@@ -50,12 +50,11 @@ export const MeetingController = {
       if (gate.status === "authorized") {
         const token = await MeetingService.generateToken(
           roomName,
-          user?.id!,
-          user?.full_name!,
+          user!,
           false,
         );
         return res.json({
-          status: "success",
+          status: gate.status,
           token,
           meeting: gate.meeting,
         });

@@ -50,4 +50,34 @@ export async function initDB() {
     UNIQUE(meeting_id, user_id)
   );
   `;
+
+  await sql`
+    CREATE TYPE sender_type AS ENUM ('user', 'agent');
+  `;
+
+  await sql`
+    CREATE TABLE IF NOT EXISTS messages (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    meeting_id UUID NOT NULL REFERENCES meetings(id) ON DELETE CASCADE,
+    sender_id UUID NOT NULL, -- The unique ID of the user/agent
+    sender_type sender_type DEFAULT 'user',
+    
+    -- recipient_id is NULL for public messages. 
+    -- It contains a User/Agent ID for private DMs.
+    recipient_id UUID DEFAULT NULL, 
+    
+    -- Your array of blocks: [{type: "text", text: "..."}, {type: "file", file: "..."}]
+    content JSONB NOT NULL DEFAULT '[]'::jsonb,
+    
+    created_at TIMESTAMPTZ DEFAULT NOW()
+);
+  `;
+
+  await sql`
+    CREATE INDEX idx_public_chat ON messages (meeting_id) WHERE (recipient_id IS NULL);
+  `
+
+  await sql`
+    CREATE INDEX idx_private_chat ON messages (meeting_id, sender_id, recipient_id) WHERE (recipient_id IS NOT NULL);
+  `
 }

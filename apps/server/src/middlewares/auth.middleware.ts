@@ -1,11 +1,11 @@
 import { type Request, type Response, type NextFunction } from "express";
 import { verifyAccessToken } from "#src/utils/token.utils.ts";
-import type { IUser } from "#src/models/user.model.ts";
+import type { IUser } from "#src/types/user.types.ts";
 
 declare global {
   namespace Express {
     interface Request {
-      user?: {
+      user: {
         id: IUser["id"];
         email: IUser["email"];
       };

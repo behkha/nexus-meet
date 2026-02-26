@@ -1,4 +1,4 @@
-import { MeetingModel } from "#src/models/meeting.model.ts";
+import { MeetingModel } from "#src/models/meetings.model.ts";
 import { IMeetingAccessType, type IMeeting } from "#src/types/meeting.types.ts";
 import type { IUser } from "#src/types/user.types.ts";
 import { AccessToken } from "livekit-server-sdk";
@@ -27,25 +27,23 @@ export const MeetingService = {
     password?: string;
   }) {
     const roomName = nanoid(10);
-    let passwordHash: string | null = null;
+    let passwordHash: string | undefined = undefined;
 
     if (accessType === IMeetingAccessType.PASSWORD && password) {
       passwordHash = await Bun.password.hash(password);
     }
 
-    const meeting = await sql<IMeeting[]>`
-      INSERT INTO meetings (title, description, room_name, host_id, access_type, password_hash)
-      VALUES (${title}, ${description}, ${roomName}, ${host.id}, ${accessType}, ${passwordHash})
-      RETURNING id, title, description, room_name, host_id, access_type, created_at;
-    `;
+    const meeting = await MeetingModel.create({
+      title,
+      description,
+      room_name: roomName,
+      host_id: host.id,
+      access_type: accessType,
+      password: passwordHash,
+    });
 
-    const token = await this.generateToken(
-      roomName,
-      host.id,
-      host.full_name || "Host",
-      true,
-    );
-    return { meeting: meeting[0], token };
+    const token = await this.generateToken(roomName, host, true);
+    return { meeting, token };
   },
   async validateJoin(roomName: string, userId: string, password?: string) {
     const meeting = await MeetingModel.findByRoomName(roomName);
@@ -83,16 +81,17 @@ export const MeetingService = {
         throw new Error("Unknown access type");
     }
   },
-  async generateToken(
-    roomName: string,
-    identity: string,
-    name: string,
-    isAdmin: boolean,
-  ) {
+  async generateToken(roomName: string, user: IUser, isHost: boolean) {
     const at = new AccessToken(
       process.env.LIVEKIT_API_KEY,
       process.env.LIVEKIT_API_SECRET,
-      { identity, name },
+      {
+        identity: user.id,
+        name: user.full_name || user.email,
+        metadata: JSON.stringify({
+          user,
+        }),
+      },
     );
 
     at.addGrant({
@@ -100,7 +99,7 @@ export const MeetingService = {
       room: roomName,
       canPublish: true,
       canSubscribe: true,
-      roomAdmin: isAdmin,
+      roomAdmin: isHost,
     });
 
     return await at.toJwt();
